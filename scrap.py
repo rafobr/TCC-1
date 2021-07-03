@@ -8,6 +8,7 @@ import json
 from tqdm import tqdm
 
 def processa_site(nome_site, sessao=None, assunto=None, limite_artigos=100):
+    '''Faz o webscraping de um determinado site'''
     if nome_site == 'tercalivre':
         if sessao and assunto:
             scraped_site = scrap_tercalivre(f'https://tercalivre.com.br/{sessao}/{assunto}/', f'https://tercalivre.com.br/{sessao}/{assunto}/page', limite_artigos)
@@ -98,7 +99,6 @@ def encontra_elemento(elemento_pai, atributo, estrategia, timeout=10):
 def aguarda(intervalo):
     time.sleep(intervalo)
 
-
 def scrap_tercalivre(url, url2, limite_artigos):
     driver.get(f'{url}')
     print(f'Conectando - {driver.title}')
@@ -143,7 +143,6 @@ def scrap_tercalivre(url, url2, limite_artigos):
                 n_artigos += 1    
  
     print(f'\nTotal de artigos a serem baixados: {len(lista_noticias)}')
-    
     return(lista_noticias)
 
 def scrap_tercalivre_conteudo(lista_artigos):
@@ -185,7 +184,6 @@ def scrap_tercalivre_colunistas(url):
         
     n_artigos = 0
     lista_colunistas = []
-   
     painel_colunistas = encontra_elemento_visivel(driver, '/html/body/div[4]/div[2]/div/div/div/div[1]/div[2]', By.XPATH)
     colunistas = painel_colunistas.find_elements_by_xpath('//h3/a')
     
@@ -193,7 +191,6 @@ def scrap_tercalivre_colunistas(url):
         link = colunista.get_attribute('href')
         lista_colunistas.extend(link.split('/')[-2:-1])
     return(lista_colunistas)
-    
 
 def scrap_conexaopolitica(url, url2, limite_artigos):
     driver.get(f'{url}')
@@ -211,7 +208,6 @@ def scrap_conexaopolitica(url, url2, limite_artigos):
             painel_artigos = driver.find_element_by_css_selector('#mvp-main-body-wrap > div.mvp-main-blog-wrap.left.relative > div > div > div')
             artigos = painel_artigos.find_elements_by_xpath('//li[contains(@class, "mvp-blog-story-col left relative infinite-post")]/a')
             if not artigos or (not isinstance(artigos, list)):
-                
                 ultima = encontra_elemento_visivel(driver, '#mvp-404 > h1', By.CSS_SELECTOR)
                 
                 if 'Error' in ultima.text: 
@@ -219,7 +215,6 @@ def scrap_conexaopolitica(url, url2, limite_artigos):
                 continue
         except:
             break
-            #continue    
 
         for artigo in artigos:
             titulo = artigo.text
@@ -240,7 +235,6 @@ def scrap_conexaopolitica(url, url2, limite_artigos):
                 raise
             finally:
                 n_artigos += 1    
- 
     print(f'\nTotal de artigos a serem baixados: {len(lista_noticias)}')
     
     return(lista_noticias)
@@ -285,7 +279,6 @@ def scrap_conexaopolitica_colunistas(url):
         
     n_artigos = 0
     lista_colunistas = []
-   
     painel_colunistas = encontra_elemento_visivel(driver, '/html/body/div[4]/div[2]/div/div/div/div[1]/div[2]', By.XPATH)
     colunistas = painel_colunistas.find_elements_by_xpath('//h3/a')
     
@@ -294,7 +287,6 @@ def scrap_conexaopolitica_colunistas(url):
         lista_colunistas.extend(link.split('/')[-2:-1])
     return(lista_colunistas)
     
-
 def scrap_247(url, url2, limite_artigos):
     driver.get(f'{url}')
     print(f'Conectando - {driver.title}')
@@ -339,9 +331,8 @@ def scrap_247(url, url2, limite_artigos):
                 raise
             finally:
                 n_artigos += 1    
- 
     print(f'\nTotal de artigos a serem baixados: {len(lista_noticias)}')
-    
+
     return(lista_noticias)
 
 def scrap_247_conteudo(lista_artigos):
@@ -382,9 +373,8 @@ def scrap_247_conteudo(lista_artigos):
         except:
             print('\nErro!')
             pass
+
     return lista_paginas
-
-
 
 def scrap_republica(url, url2, limite_artigos):
     driver.get(f'{url}')
@@ -404,7 +394,6 @@ def scrap_republica(url, url2, limite_artigos):
                 break
         except:
             continue    
-
         for artigo in artigos:
             titulo = artigo.text
             link = artigo.get_attribute('href')
@@ -464,9 +453,8 @@ def scrap_republica_conteudo(lista_artigos):
         except:
             print('\nErro!')
             pass
+
     return lista_paginas
-
-
 
 def scrap_senso(url, url2, limite_artigos):
     driver.get(f'{url}')
@@ -538,8 +526,6 @@ def scrap_senso_conteudo(lista_artigos):
                     break
                 if 'Assine ' in p_temp:
                     break
- 
- 
                 texto.append(p_temp) 
         
             corpo = ' '.join(texto)
@@ -551,8 +537,8 @@ def scrap_senso_conteudo(lista_artigos):
         except:
             print('\nErro!')
             pass
-    return lista_paginas
 
+    return lista_paginas
 
 def scrap_dcm(url, url2, limite_artigos):
     driver.get(f'{url}')
@@ -625,8 +611,6 @@ def scrap_dcm_conteudo(lista_artigos):
                     break
                 if 'Assine ' in p_temp:
                     break
- 
- 
                 texto.append(p_temp) 
         
             corpo = ' '.join(texto)
@@ -638,9 +622,8 @@ def scrap_dcm_conteudo(lista_artigos):
         except:
             print('\nErro!')
             pass
+    
     return lista_paginas
-
-
 
 
 def scrap_g1(url, url2, limite_artigos):
@@ -650,7 +633,6 @@ def scrap_g1(url, url2, limite_artigos):
 
     #Aguarda carregamento botão 'Carregar Mais'
     botao_carrega_mais = encontra_elemento_clicavel(driver, '#feed-placeholder > div > div > div.load-more.gui-color-primary-bg > a', By.CSS_SELECTOR)
-
     try: 
 
         prosseguir_lgpd = encontra_elemento_clicavel(driver, '#cookie-banner-lgpd > div > div.cookie-banner-lgpd_button-box > button', By.CSS_SELECTOR)
@@ -747,12 +729,10 @@ def scrap_g1_conteudo(lista_artigos):
             })
         except:
             pass  
+
     return lista_paginas
 
-
-
 if __name__ == '__main__':
-
     chrome_options = Options()
     chrome_options.add_argument("--window-size=600,600")
     chrome_options.add_argument('--no-sandbox')
